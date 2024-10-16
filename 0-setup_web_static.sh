@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
-# Write a Bash script that sets up your web servers for the deployment of web_static
-
-apt-get update
-apt-get -y install nginx
-
-mkdir -p /data/web_static/releases/test/
-mkdir -p /data/web_static/shared/
-
-echo "<h1>Abimbola Ronald</h1>" > /data/web_static/releases/test/index.html
+# Script that sets up my  web servers for the deployment of web_static
+sudo apt-get -y update
+sudo apt-get -y install nginx 
+sudo service nginx start
+# Creating parent directories
+sudo mkdir -p /data/web_static/shared/
+sudo mkdir -p /data/web_static/releases/test/
+# Creating a fake HTML file with simple content
+echo 'Mediqueueless' | sudo tee /data/web_static/releases/test/index.html
+#Creating a symbolic link
 ln -sf /data/web_static/releases/test/ /data/web_static/current
-chown -R ubuntu:ubuntu /data/
-sudo sed -i '/listen 80 default_server/a location /hbnb_static { alias /data/web_static/current/;}' /etc/nginx/sites-enabled/default
+# Giving ownership of the /data/ folder to the ubuntu user AND group
+sudo chown -R ubuntu:ubuntu /data/
+# Updating the Nginx configuration to serve the content of /data/web_static/current/ to hbnb_static
+sed -i "38i location /hbnb_static/ { alias /data/web_static/current/; }" /etc/nginx/sites-available/default
+# Restarting Nginx
 sudo service nginx restart
